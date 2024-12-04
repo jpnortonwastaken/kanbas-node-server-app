@@ -31,7 +31,7 @@ export default function UserRoutes(app) {
         res.json(users);
         return;
       }
-      // default case
+      // the default case
       const users = await dao.findAllUsers();
       res.json(users);
     } catch (error) {
