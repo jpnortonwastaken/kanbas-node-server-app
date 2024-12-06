@@ -2,7 +2,7 @@ export default [
   {
     _id: "A101",
     title: "Propulsion Assignment",
-    course: "RS101",
+    course: "674f885daeebf11a84ed3272",
     description: "Assignment on basic propulsion systems.",
     points: 100,
     due_date: "2024-10-15",
