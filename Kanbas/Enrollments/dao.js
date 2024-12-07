@@ -25,9 +25,10 @@ export function unenrollUserFromCourse(userId, courseId) {
 }
 
 export const findUsersForCourse = async (courseId) => {
-  const enrollments = await model
-    .find({ course: courseId })
-    .populate("user")
-    .exec();
-  return enrollments.map((enrollment) => enrollment.user);
+  const enrollments = Database.enrollments.filter(
+    (enrollment) => enrollment.course === courseId
+  );
+  const userIds = enrollments.map((enrollment) => enrollment.user);
+  const users = Database.users.filter((user) => userIds.includes(user._id));
+  return users;
 };
