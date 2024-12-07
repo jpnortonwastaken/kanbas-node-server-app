@@ -1,34 +1,54 @@
 import Database from "../Database/index.js";
 import model from "./model.js";
 
-export function findEnrollmentsForUser(userId) {
-  return Database.enrollments.filter(
-    (enrollment) => enrollment.user === userId
-  );
-}
+export const findEnrollmentsForUser = async (userId) => {
+  try {
+    const enrollments = await model.find({ user: userId }).lean().exec();
+    return enrollments.map((enrollment) => ({
+      _id: enrollment._id.toString(),
+      user: enrollment.user.toString(),
+      course: enrollment.course.toString(),
+    }));
+  } catch (error) {
+    console.error("Error finding enrollments for user:", error);
+    throw error;
+  }
+};
 
-export function enrollUserInCourse(userId, courseId) {
-  const enrollment = {
-    _id: new Date().getTime().toString(),
-    user: userId,
-    course: courseId,
-  };
-  Database.enrollments.push(enrollment);
-  return enrollment;
-}
+export const enrollUserInCourse = async (userId, courseId) => {
+  try {
+    const enrollment = await model.create({
+      user: userId,
+      course: courseId,
+      enrollmentDate: new Date(),
+    });
 
-export function unenrollUserFromCourse(userId, courseId) {
-  Database.enrollments = Database.enrollments.filter(
-    (enrollment) =>
-      !(enrollment.user === userId && enrollment.course === courseId)
-  );
-}
+    return {
+      _id: enrollment._id.toString(),
+      user: enrollment.user.toString(),
+      course: enrollment.course.toString(),
+    };
+  } catch (error) {
+    console.error("Error enrolling user in course:", error);
+    throw error;
+  }
+};
+
+export const unenrollUserFromCourse = async (userId, courseId) => {
+  try {
+    await model.deleteOne({ user: userId, course: courseId });
+  } catch (error) {
+    console.error("Error unenrolling user from course:", error);
+    throw error;
+  }
+};
 
 export const findUsersForCourse = async (courseId) => {
-  const enrollments = Database.enrollments.filter(
-    (enrollment) => enrollment.course === courseId
-  );
-  const userIds = enrollments.map((enrollment) => enrollment.user);
-  const users = Database.users.filter((user) => userIds.includes(user._id));
-  return users;
+  try {
+    const enrollments = await model.find({ course: courseId }).lean().exec();
+    return enrollments.map((enrollment) => enrollment.user.toString());
+  } catch (error) {
+    console.error("Error finding users for course:", error);
+    throw error;
+  }
 };
