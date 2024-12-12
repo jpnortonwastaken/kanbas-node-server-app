@@ -49,6 +49,15 @@ function QuestionRoutes(app) {
     const status = await dao.deleteQuestion(req.params.questionId);
     res.json(status);
   });
+
+  app.delete("/api/quizzes/:quizId/questions", async (req, res) => {
+    try {
+      await dao.deleteQuestionsByQuiz(req.params.quizId);
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 }
 
 export default QuestionRoutes;
