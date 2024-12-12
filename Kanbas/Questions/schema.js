@@ -11,16 +11,18 @@ const questionSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: ["MULTIPLE_CHOICE", "TRUE_FALSE", "FILL_BLANK"],
-      default: "MULTIPLE_CHOICE",
+      required: true,
     },
     title: { type: String, required: true },
-    points: { type: Number, default: 0 },
-    question: { type: String, required: true },
+    points: { type: Number, required: true },
+    question: { type: String, required: true, default: "New Question" },
     choices: [String], // For multiple choice
     correctAnswer: mongoose.Schema.Types.Mixed, // Different for each type
-    order: { type: Number, default: 0 },
   },
-  { timestamps: true, collection: "questions" }
+  {
+    timestamps: true,
+    collection: "questions", // Add this to use correct collection
+  }
 );
 
 export default questionSchema;
